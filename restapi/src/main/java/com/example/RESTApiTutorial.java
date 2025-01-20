@@ -33,5 +33,30 @@ public class RESTApiTutorial {
         
         HttpResponse<String> postResponse = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
         System.out.println(postResponse.body());
+
+        transcript = gson.fromJson(postResponse.body(), Transcript.class);
+        System.out.println(transcript.getId());
+
+        HttpRequest getRequest = HttpRequest.newBuilder()
+            .uri(new URI("https://api.assemblyai.com/v2/transcript/" + transcript.getId()))
+            .header("Authorization", API_KEY)
+            .GET()
+            .build();
+
+        while (true) {
+            HttpResponse<String> getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+            transcript = gson.fromJson(getResponse.body(), Transcript.class);
+
+            System.out.println(transcript.getStatus());
+
+            if (transcript.getStatus().equals("completed") || transcript.getStatus().equals("error")) {
+                break;
+            }
+            // Wait for a second before checking the status again
+            Thread.sleep(1000);
+        }
+        
+        System.out.println("Transcription complete!");
+        System.out.println(transcript.getText());
     }
 }

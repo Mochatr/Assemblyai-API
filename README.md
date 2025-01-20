@@ -1,0 +1,1 @@
+This basic project is about learning how to build a simple RestAPI. we are using the assembly AI API as an example to understand how a Restful API works.
